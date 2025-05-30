@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Selamat Ulang Tahun</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('confetti-9182057_1280.png') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      width: 350px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      animation: fadeIn 2s ease-in-out;
+    }
+    h2 {
+      color: #e91e63;
+      margin: 10px 0;
+    }
+    h3 {
+      margin: 0;
+      font-weight: bold;
+    }
+    p {
+      color: #444;
+      font-size: 1.1em;
+    }
+
+    .cake {
+      width: 100px;
+      margin-top: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .action-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .whatsapp-btn {
+      background-color: #25D366;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      font-family: sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    canvas#confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti"></canvas>
+
+<div class="card">
+  <h2>Selamat Ulang Tahun!</h2>
+  <h3>🎉Bening Aulia Rahman🎉</h3>
+  <p>Semoga panjang umur, sehat selalu,<br>
+     dan dilimpahi kebahagiaan 🎉🎂</p>
+
+  <div class="action-column">
+    <img src="cake-8582253_1280.png" alt="Kue" class="cake">
+    <a class="whatsapp-btn" 
+       href="https://wa.me/6288740097336?text=Bagi%20hadiahnya%20dong%20%F0%9F%92%B0%20%F0%9F%98%9C"
+       target="_blank">
+       Claim Hadiah
+    </a>
+  </div>
+</div>
+
+<audio id="birthdayAudio" src="happy-birthday-220024.mp3" loop></audio>
+
+<script>
+  // Confetti
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+  let confetti = [];
+  const confettiCount = 150;
+  const colors = ['#ff69b4', '#ffcc00', '#66ccff', '#99ff99', '#ff6666'];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createConfetti() {
+    for (let i = 0; i < confettiCount; i++) {
+      confetti.push({
+        x: random(0, canvas.width),
+        y: random(0, canvas.height),
+        r: random(2, 6),
+        d: random(2, 4),
+        color: colors[Math.floor(Math.random() * colors.length)],
+        tilt: random(-10, 10),
+        tiltAngleIncremental: random(0.05, 0.1),
+        tiltAngle: 0
+      });
+    }
+  }
+
+  function drawConfetti() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < confetti.length; i++) {
+      const c = confetti[i];
+      ctx.beginPath();
+      ctx.lineWidth = c.r;
+      ctx.strokeStyle = c.color;
+      ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+      ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
+      ctx.stroke();
+    }
+
+    updateConfetti();
+  }
+
+  function updateConfetti() {
+    for (let i = 0; i < confetti.length; i++) {
+      const c = confetti[i];
+      c.tiltAngle += c.tiltAngleIncremental;
+      c.y += (Math.cos(c.d) + 1 + c.r / 2) / 2;
+      c.x += Math.sin(c.d);
+      c.tilt = Math.sin(c.tiltAngle) * 15;
+
+      if (c.y > canvas.height) {
+        confetti[i] = {
+          x: random(0, canvas.width),
+          y: -10,
+          r: c.r,
+          d: c.d,
+          color: c.color,
+          tilt: c.tilt,
+          tiltAngleIncremental: c.tiltAngleIncremental,
+          tiltAngle: c.tiltAngle
+        };
+      }
+    }
+  }
+
+  function animateConfetti() {
+    drawConfetti();
+    requestAnimationFrame(animateConfetti);
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  createConfetti();
+  animateConfetti();
+
+  // Audio play on click
+  window.addEventListener('click', function() {
+    const audio = document.getElementById('birthdayAudio');
+    audio.play();
+  }, { once: true });
+</script>
+
+</body>
+</html>
